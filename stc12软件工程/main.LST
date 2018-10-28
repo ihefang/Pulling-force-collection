@@ -1,0 +1,164 @@
+C51 COMPILER V9.02   MAIN                                                                  09/24/2018 20:43:12 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: F:\keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /****************************************************************************** 
+   2            À­Á¦ÏµÍ³
+   3          
+   4            ÎÄ ¼þ Ãû   : main.c
+   5            °æ ±¾ ºÅ   : v1.0  
+   6            ±àÒëÈÕÆÚ   : 20180103
+   7            ×÷    Õß   : hefang
+   8            ¹¦ÄÜÃèÊö   : 24M¾§Õñ 
+   9            
+  10            ½Ó    ¿Ú   £º
+  11                         I2C£¨µçÑ¹£©£º
+  12                                     sbit SDA=P3^5;
+  13                         sbit SCL=P3^4;  
+  14                                     
+  15                                     OLED£º
+  16                                     sbit OLED_CS=P2^4; //Æ¬Ñ¡
+  17                         sbit OLED_RST =P2^2;//¸´Î»
+  18                         sbit OLED_DC =P2^3;//Êý¾Ý/ÃüÁî¿ØÖÆ
+  19                         sbit OLED_SCL=P2^0;//Ê±ÖÓ D0£¨SCLK£
+  20                         sbit OLED_SDIN=P2^1;//D1£¨MOSI£© Êý¾Ý
+  21          
+  22                                     hx711:
+  23          
+  24                                                        
+  25          -------------------------------------------------------------------------------
+  26            ¸üÐÂÈÕÖ¾   :
+  27            ÈÕ    ÆÚ   : 
+  28            ×÷    Õß   : 
+  29          ******************************************************************************/
+  30          #include <reg52.h>                
+  31          #include "read voltage value.h"
+  32          #include "i2c.h"
+  33          #include "delay.h"
+  34          #include "pit.h"
+  35          #include "uart.h"
+  36          #include "hx711.h"
+  37          #include "oled.h"
+  38          #include "bmp.h"        
+  39          #include "oled_display.h"
+  40          #define IAP_update() IAP_CONTR = IAP_ENABLE 
+  41          
+  42          void os_init(void)
+  43          {
+  44   1      /********************************************/
+  45   1        OLED_Init();                  //³õÊ¼»¯OLED 
+  46   1        OLED_Clear();
+  47   1        OLED_DrawBMP(0,0,128,8,BMP2);//ºÎ·½
+  48   1        OLED_ShowCHinese(91 ,6,0);//¿Æ
+  49   1        OLED_ShowCHinese(109,6,1);//¼¼
+  50   1        delay_ms(1500);
+  51   1      /********************************************/
+  52   1        OLED_Clear();
+  53   1        OLED_ShowCHinese(0 ,0,2);//³õÊ¼»¯¶¨Ê±Æ÷
+  54   1        OLED_ShowCHinese(18,0,3);
+  55   1        OLED_ShowCHinese(36,0,4);
+C51 COMPILER V9.02   MAIN                                                                  09/24/2018 20:43:12 PAGE 2   
+
+  56   1        OLED_ShowCHinese(54,0,7);
+  57   1        OLED_ShowCHinese(72,0,8);
+  58   1        OLED_ShowCHinese(90,0,9);     
+  59   1      /********************************************/
+  60   1        Timer0_Init();
+  61   1      /********************************************/
+  62   1        delay_ms(100);
+  63   1        OLED_ShowCHinese(0 ,2,2);//³õÊ¼»¯´®¿Ú
+  64   1        OLED_ShowCHinese(18,2,3);
+  65   1        OLED_ShowCHinese(36,2,4);
+  66   1        OLED_ShowCHinese(54,2,10);
+  67   1        OLED_ShowCHinese(72,2,11);    
+  68   1      /********************************************/
+  69   1        UART_Init();
+  70   1      /********************************************/
+  71   1        delay_ms(100);
+  72   1        OLED_ShowCHinese(0 ,4,12);//´ò¿ªÖÐ¶Ï
+  73   1        OLED_ShowCHinese(18,4,13);
+  74   1        OLED_ShowCHinese(36,4,14);
+  75   1        OLED_ShowCHinese(54,4,15);
+  76   1      /********************************************/   
+  77   1        TR0 = 1; //ÔÊÐí¶¨Ê±Æ÷0¹¤×÷
+  78   1        TR1 = 1; //ÔÊÐí¶¨Ê±Æ÷1¹¤×÷
+  79   1        ET0 = 1; //¶¨Ê±Æ÷0ÖÐ¶Ï´ò¿ª
+  80   1        //ET1 = 1; //¶¨Ê±Æ÷1ÖÐ¶Ï´ò¿ª (¶¨Ê±Æ÷1ÓÃ×÷´®¿ÚÊ±¹Ø±ÕÖÐ¶Ï)
+  81   1        EA  = 1; //×ÜÖÐ¶Ï´ò¿ª
+  82   1      /********************************************/
+  83   1        delay_ms(100);
+  84   1        OLED_ShowCHinese(0 ,6,16);//½øÈëÏµÍ³
+  85   1        OLED_ShowCHinese(18,6,17);
+  86   1        OLED_ShowCHinese(36,6,18);
+  87   1        OLED_ShowCHinese(54,6,19);
+  88   1        delay_ms(100);
+  89   1        OLED_Clear();
+  90   1      }    
+  91          /****************************************************************************** 
+  92                                                                                  Ö÷³ÌÐò
+  93          ******************************************************************************/
+  94          unsigned int hx711date;
+  95          unsigned int InitForceValue;
+  96          int f_val;
+  97          extern char tiaoling;
+  98          char update=0;
+  99          extern int buff_hx[5];
+ 100          
+ 101          
+ 102          main()
+ 103          {
+ 104   1        os_init();
+ 105   1        delay_ms(200);
+ 106   1        InitForceValue=hx711date;
+ 107   1        delay_ms(200);
+ 108   1        InitForceValue=hx711date;
+ 109   1         
+ 110   1      /********************************************/
+ 111   1        while (1)  //Ö÷Ñ­»·
+ 112   1        {      
+ 113   2          
+ 114   2              //InitForceValue=ReadCount();
+ 115   2      
+ 116   2              if(tiaoling==1)
+ 117   2              {
+C51 COMPILER V9.02   MAIN                                                                  09/24/2018 20:43:12 PAGE 3   
+
+ 118   3                EA  = 0;
+ 119   3                InitForceValue=ReadCount();
+ 120   3                EA  = 1;
+ 121   3                tiaoling=0;   
+ 122   3              }
+ 123   2              if(update==1) 
+ 124   2              {
+ 125   3                IAP_update();
+ 126   3              }
+ 127   2          EA  = 0;
+ 128   2              hx711date = ReadCount();
+ 129   2              EA  = 1;
+ 130   2              f_val = hx711date - InitForceValue;
+ 131   2              buff_hx[0] = f_val;
+ 132   2              
+ 133   2              display();      
+ 134   2        }
+ 135   1      }
+ 136          
+ 137          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    359    ----
+   CONSTANT SIZE    =   2048    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      7    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

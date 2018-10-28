@@ -1,0 +1,16 @@
+"STARTUP.obj",
+"delay.obj",
+"display.obj",
+"hx711.obj",
+"i2c.obj",
+"init.obj",
+"key.obj",
+"main.obj",
+"oled.obj",
+"oled_display.obj",
+"pit.obj",
+"read voltage value.obj",
+"uart.obj" 
+TO "Pulling force collection" 
+RAMSIZE(256) 
+CODE( 0X0000-0XEFFE )

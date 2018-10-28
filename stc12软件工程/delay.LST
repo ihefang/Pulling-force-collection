@@ -1,0 +1,59 @@
+C51 COMPILER V9.02   DELAY                                                                 09/24/2018 20:43:12 PAGE 1   
+
+
+C51 COMPILER V9.02, COMPILATION OF MODULE DELAY
+OBJECT MODULE PLACED IN delay.OBJ
+COMPILER INVOKED BY: F:\keil\C51\BIN\C51.EXE delay.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include "delay.h"
+   2          #include <reg52.h>              
+   3          /****************************************************************************** 
+   4           uS延时函数，含有输入参数 unsigned char t，无返回值
+   5           unsigned char 是定义无符号字符变量，其值的范围是
+   6           0~255 这里使用晶振12M，精确延时请使用汇编,大致延时
+   7           长度如下 T=tx2+5 uS                                                                    
+   8          ******************************************************************************
+   9          void DelayUs(unsigned char t)   //改为24M
+  10          {   
+  11           while(--t);
+  12          }
+  13          /****************************************************************************** 
+  14           mS延时函数，含有输入参数 unsigned char t，无返回值
+  15           unsigned char 是定义无符号字符变量，其值的范围是
+  16           0~255 这里使用晶振12M，精确延时请使用汇编                              
+  17          ******************************************************************************
+  18          void DelayMs(unsigned int t)            //改为24M
+  19          { 
+  20                   while(t--)
+  21                   {
+  22                       //大致延时1mS
+  23                           DelayUs(220);
+  24                           DelayUs(220);
+  25                   }
+  26          }
+  27          /***********************************************************/ 
+  28          void  delay_ms(unsigned int ms)
+  29          {
+  30   1              unsigned int i;
+  31   1              do
+  32   1              {
+  33   2                      i = MAIN_Fosc / 14000L; //1T
+  34   2                      while(--i)      ;   //8T per loop at 12T or 6T mode, 14T at 1T mode
+  35   2           }while(--ms);
+  36   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     23    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
